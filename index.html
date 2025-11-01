@@ -90,19 +90,24 @@
           };
 
           if (editingId) {
+            // עדכון רשומה קיימת
             await fetch(`${API_URL}/טלפון/${phone}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(recordData)
             });
           } else {
+            // הוספת רשומה חדשה
             await fetch(API_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(recordData)
+              body: JSON.stringify({
+                data: recordData
+              })
             });
           }
 
+          await new Promise(resolve => setTimeout(resolve, 500));
           await fetchData();
           handleLogout();
           alert('נשמר בהצלחה! ✅');
