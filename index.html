@@ -89,7 +89,10 @@
             'מה הוא מביא': editFood
           };
 
-          if (editingId) {
+          // בדיקה אם הטלפון קיים בנתונים
+          const existingRecord = data.find(u => u['טלפון'] === phone);
+          
+          if (existingRecord) {
             // עדכון רשומה קיימת
             await fetch(`${API_URL}/טלפון/${phone}`, {
               method: 'PUT',
