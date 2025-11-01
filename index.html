@@ -93,22 +93,26 @@
           const existingRecord = data.find(u => u['טלפון'] === phone);
           
           if (existingRecord) {
-            // עדכון רשומה קיימת
-            await fetch(`${API_URL}/טלפון/${phone}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(recordData)
-            });
-          } else {
-            // הוספת רשומה חדשה
-            await fetch(API_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                data: recordData
-              })
-            });
+            // עדכון רשומה קיימת - מחפשים לפי טלפון עם DELETE + INSERT
+            try {
+              await fetch(`${API_URL}?טלפון=${phone}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+              });
+              await new Promise(resolve => setTimeout(resolve, 200));
+            } catch (e) {
+              console.log('Delete attempt:', e);
+            }
           }
+          
+          // הוספה תמיד (או בעדכון זה יהיה הוספה אחרי DELETE)
+          await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              data: recordData
+            })
+          });
 
           await new Promise(resolve => setTimeout(resolve, 500));
           await fetchData();
